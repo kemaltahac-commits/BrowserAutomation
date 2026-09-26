@@ -2,7 +2,13 @@
 
 A Python-based browser automation and web scraping project built with Playwright and Pandas.
 
-The project automatically navigates through a paginated website, extracts product information, processes the collected data, and exports the results to Excel.
+This project automatically navigates through a paginated website, extracts structured product information, processes the data, and exports the results to Excel.
+
+## Problem
+
+Manually collecting product information from multiple web pages is repetitive and time-consuming.
+
+This project automates the process by navigating through available pages, extracting product data, processing it with Pandas, and generating an Excel report.
 
 ## Features
 
@@ -10,12 +16,11 @@ The project automatically navigates through a paginated website, extracts produc
 - Automated product scraping
 - Pagination handling
 - Product title extraction
-- Price extraction and conversion
+- Price extraction and numeric conversion
 - Absolute URL normalization
 - Pandas data processing
 - Excel report generation
-- Error handling
-- Logging
+- Error-safe browser cleanup
 - Automated tests with Pytest
 
 ## Tech Stack
@@ -38,15 +43,17 @@ BrowserAutomation/
 │   └── scraper.log
 │
 ├── src/
-│   └── main.py
+│   ├── automation.py
+│   ├── main.py
+│   ├── reporter.py
+│   ├── scraper.py
+│   └── scraper_types.py
 │
 ├── tests/
 │   └── test_scraper.py
 │
 ├── .gitignore
-├── README.md
-└── venv/ 
-
+└── README.md
 How It Works
 
 The scraper follows this workflow:
@@ -55,25 +62,24 @@ Website
    ↓
 Playwright Browser Automation
    ↓
-Product Extraction
-   ↓
 Pagination
+   ↓
+Product Extraction
    ↓
 URL Normalization
    ↓
-Pandas DataFrame
+Price Conversion
    ↓
-Data Processing
+Pandas DataFrame
    ↓
 Excel Report
    ↓
-Logging & Testing 
-
+Automated Tests
 Installation
 
 Clone the repository:
 
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/kemaltahac-commits/BrowserAutomation.git
 cd BrowserAutomation
 
 Create a virtual environment:
@@ -102,19 +108,40 @@ The scraper will:
 Open the target website.
 Navigate through available pages.
 Extract product titles, prices, and URLs.
+Convert prices to numeric values.
 Convert relative URLs into absolute URLs.
-Store the data in a Pandas DataFrame.
+Store the collected data in a Pandas DataFrame.
 Calculate basic price statistics.
 Export the results to Excel.
-Write execution information to the log file.
+Close the browser safely.
+
+The current run processes 1000 products.
 
 The generated Excel file will be saved to:
 
 output/all_books.xlsx
+Example Output
 
-Logs will be saved to:
+The generated dataset contains:
 
-logs/scraper.log
+Column	Description
+title	Product title
+price	Product price as a numeric value
+url	Absolute product URL
+
+Example:
+
+title: A Light in the Attic
+price: 51.77
+url: https://books.toscrape.com/...
+Output Statistics
+
+The scraper calculates basic price statistics:
+
+Total products: 1000
+Average price: 35.07
+Highest price: 59.99
+Lowest price: 10.00
 Testing
 
 Run the automated tests with:
@@ -133,34 +160,28 @@ Product titles are not empty
 Current test result:
 
 6 passed
-Example Output
+Error Handling
 
-The generated dataset contains:
+The automation system uses a try/finally structure to ensure that the browser is closed even if an error occurs during scraping or report generation.
 
-Column	Description
-title	Product title
-price	Product price as a numeric value
-url	Absolute product URL
+This prevents browser resources from remaining open after a failed execution.
 
-Example:
+OOP Structure
 
-title: A Light in the Attic
-price: 51.77
-url: https://books.toscrape.com/...
-Error Handling & Logging
+The project also demonstrates:
 
-The scraper uses Python's logging module to record:
+Composition
+Inheritance
+Polymorphism
+Separation of responsibilities
 
-Scraping start/end
-Page processing
-Product counts
-Scraping errors
-Report generation
-Output creation
-Browser shutdown
+The main automation flow is separated into:
 
-If an individual product cannot be scraped, the error is logged and the scraper continues processing the remaining products.
-
+AutomationSystem
+       │
+       ├── BookScraper
+       │
+       └── ReportGenerator
 Purpose
 
 This project was built as a practical browser automation and data processing project.
