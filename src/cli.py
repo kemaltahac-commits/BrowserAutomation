@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from config import ScrapeConfig
+from engine import scrape, write_output
 
 
 def parse_field(raw: str) -> tuple[str, str, str | None]:
@@ -93,8 +94,19 @@ def main(argv: list[str] | None = None) -> int:
         log.error(e)
         return 2
 
-    log.info("Config hazır: %s", cfg)
-    # Parça 2: burada scrape(cfg) çağrılacak
+    log.info("Başlıyor: %s", cfg.url)
+    try:
+        rows = scrape(cfg)
+    except Exception:
+        log.exception("Scraping başarısız")
+        return 1
+
+    if not rows:
+        log.error("0 kayıt çekildi. --item-selector / --field değerlerini kontrol et.")
+        return 3
+
+    write_output(rows, cfg.out)
+    log.info("Bitti: %d kayıt -> %s", len(rows), cfg.out)
     return 0
 
 
