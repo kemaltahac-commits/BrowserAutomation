@@ -1,206 +1,144 @@
 # Browser Automation & Web Scraper
 
-A Python-based browser automation and web scraping project built with Playwright and Pandas.
-
-This project automatically navigates through a paginated website, extracts structured product information, processes the data, and exports the results to Excel.
+A Python browser automation and web scraping tool built with Playwright and Pandas. It navigates paginated websites, extracts structured data, cleans it, and exports to Excel, CSV or JSON. It can be configured entirely from the command line.
 
 ## Problem
 
-Manually collecting product information from multiple web pages is repetitive and time-consuming.
-
-This project automates the process by navigating through available pages, extracting product data, processing it with Pandas, and generating an Excel report.
+Collecting data from many web pages by hand is repetitive and slow. This project automates it: point it at a URL, describe what to extract with CSS selectors, and get a clean data file.
 
 ## Features
 
-- Browser automation with Playwright
-- Automated product scraping
-- Pagination handling
-- Product title extraction
-- Price extraction and numeric conversion
-- Absolute URL normalization
-- Pandas data processing
-- Excel report generation
-- Error-safe browser cleanup
-- Automated tests with Pytest
+- Configurable scraping from the CLI (no code changes per site)
+- Pagination handling via a next-page selector
+- Field extraction by CSS selector or attribute (`selector@attr`)
+- Safe price parsing (`£51.77`, `$1,299.00`, `1.299,00 ₺`, `€ 12,5`)
+- Relative to absolute URL normalization
+- Export to `.xlsx`, `.csv` or `.json`
+- Input validation and clear exit codes
+- Browser cleanup with try/finally
+- 16 automated tests with Pytest
 
 ## Tech Stack
 
-- Python
-- Playwright
-- Pandas
-- OpenPyXL
-- Pytest
+Python, Playwright, Pandas, OpenPyXL, Pytest
 
 ## Project Structure
 
 ```text
 BrowserAutomation/
-│
-├── output/
-│   └── all_books.xlsx
-│
-├── logs/
-│   └── scraper.log
-│
+├── output/              # generated data files
+├── logs/                # log files
 ├── src/
-│   ├── automation.py
-│   ├── main.py
-│   ├── reporter.py
-│   ├── scraper.py
-│   └── scraper_types.py
-│
+│   ├── cli.py           # command-line entry point
+│   ├── config.py        # scrape configuration and validation
+│   ├── engine.py        # scraping orchestration (pagination, extraction)
+│   ├── parsing.py       # price and URL normalization (unit-tested)
+│   ├── automation.py    # legacy flow: orchestrates scraper + report
+│   ├── scraper.py       # legacy book scraper
+│   ├── reporter.py      # legacy Excel report generator
+│   └── main.py          # legacy entry point (books.toscrape.com)
 ├── tests/
-│   └── test_scraper.py
-│
+│   ├── test_parsing.py  # unit tests for parsing
+│   └── test_scraper.py  # checks on output/all_books.xlsx
 ├── .gitignore
 └── README.md
-How It Works
+```
 
-The scraper follows this workflow:
+## Installation
 
-Website
-   ↓
-Playwright Browser Automation
-   ↓
-Pagination
-   ↓
-Product Extraction
-   ↓
-URL Normalization
-   ↓
-Price Conversion
-   ↓
-Pandas DataFrame
-   ↓
-Excel Report
-   ↓
-Automated Tests
-Installation
-
-Clone the repository:
-
+```bash
 git clone https://github.com/kemaltahac-commits/BrowserAutomation.git
 cd BrowserAutomation
-
-Create a virtual environment:
-
 python -m venv venv
+```
 
-Activate it on Windows:
+Activate the environment:
 
+```bash
+# Windows
 venv\Scripts\activate
+# macOS / Linux
+source venv/bin/activate
+```
 
-Install dependencies:
+Install dependencies and the browser:
 
+```bash
 pip install playwright pandas openpyxl pytest
-
-Install the Chromium browser required by Playwright:
-
 playwright install chromium
-Run the Scraper
+```
 
-From the project root:
+## CLI Usage
 
+```bash
+py src/cli.py --url https://books.toscrape.com/ \
+  --item-selector "article.product_pod" \
+  --field title="h3 a@title" \
+  --field price=".price_color" \
+  --field url="h3 a@href" \
+  --next-selector "li.next a" \
+  --out output/books.xlsx
+```
+Option	Description
+--url	Start URL (must be a valid URL)
+--item-selector	CSS selector matching each record on the page
+--field NAME=SELECTOR[@ATTR]	Field to extract. Repeatable. @attr reads an attribute (e.g. @href, @title)
+--next-selector	Selector of the next-page link. Without it, one page is scraped
+--max-pages	Limit the number of pages
+--out	Output file. Extension must be .xlsx, .json or .csv
+Exit codes:
+
+Code	Meaning
+0	Success
+2	Invalid arguments (bad URL, bad output extension)
+3	Zero records scraped (check selectors)
+Example run (full site):
+
+text
+Copy
+Sayfa 50: 20 kayıt (toplam 1000)
+Bitti: 1000 kayıt -> output\books.xlsx
+Try:
+|
+Legacy Flow
+The original fixed-target flow is still available:
+
+bash
+Copy
 py src/main.py
+Try:
+|
+It scrapes all 1000 books from books.toscrape.com and writes output/all_books.xlsx with basic price statistics (average 35.07, max 59.99, min 10.00).
 
-The scraper will:
-
-Open the target website.
-Navigate through available pages.
-Extract product titles, prices, and URLs.
-Convert prices to numeric values.
-Convert relative URLs into absolute URLs.
-Store the collected data in a Pandas DataFrame.
-Calculate basic price statistics.
-Export the results to Excel.
-Close the browser safely.
-
-The current run processes 1000 products.
-
-The generated Excel file will be saved to:
-
-output/all_books.xlsx
-Example Output
-
-The generated dataset contains:
-
+Output Format
 Column	Description
 title	Product title
-price	Product price as a numeric value
+price	Price as a numeric value
 url	Absolute product URL
+Column names come from the --field names you provide.
 
-Example:
-
-title: A Light in the Attic
-price: 51.77
-url: https://books.toscrape.com/...
-Output Statistics
-
-The scraper calculates basic price statistics:
-
-Total products: 1000
-Average price: 35.07
-Highest price: 59.99
-Lowest price: 10.00
 Testing
+bash
+Copy
+py -m pytest tests -v
+Try:
+|
+Current result: 16 passed.
 
-Run the automated tests with:
+test_parsing.py: price formats (£, $, €, ₺, thousands separators, text, empty, None) and absolute URL resolution.
+test_scraper.py: output file exists, contains data, required columns exist, prices are numeric, URLs are absolute, titles are not empty.
+Note: test_scraper.py reads output/all_books.xlsx, so run py src/main.py first on a fresh clone.
 
-py -m pytest tests
-
-The test suite verifies:
-
-Excel output exists
-Excel contains data
-Required columns exist
-Prices are numeric
-URLs are absolute
-Product titles are not empty
-
-Current test result:
-
-6 passed
 Error Handling
-
-The automation system uses a try/finally structure to ensure that the browser is closed even if an error occurs during scraping or report generation.
-
-This prevents browser resources from remaining open after a failed execution.
-
-OOP Structure
-
-The project also demonstrates:
-
-Composition
-Inheritance
-Polymorphism
-Separation of responsibilities
-
-The main automation flow is separated into:
-
-AutomationSystem
-       │
-       ├── BookScraper
-       │
-       └── ReportGenerator
-Purpose
-
-This project was built as a practical browser automation and data processing project.
-
-It demonstrates the ability to combine:
-
-Browser Automation + Web Scraping + Data Processing + Excel Reporting + Testing
-
-The architecture can be extended for business automation workflows such as:
-
+Invalid URL or output extension fails fast with exit code 2.
+A wrong --item-selector logs a warning and exits with code 3.
+The browser is closed in a finally block even if scraping fails.
+Use Cases
 Product data collection
 Price monitoring
-Business data extraction
-Automated Excel reports
 Website-to-Excel workflows
-Recurring data collection
+Recurring data extraction for business reports
 Author
-
 Kemal
-
 Management Information Systems Student
 Python Automation & Business Data Tools
