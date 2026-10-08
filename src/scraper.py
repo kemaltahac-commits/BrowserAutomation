@@ -1,3 +1,4 @@
+from urllib.parse import urljoin
 from playwright.sync_api import sync_playwright
 
 
@@ -46,7 +47,7 @@ class BookScraper:
                     "h3 a"
                 ).get_attribute("href")
 
-                url = self.page.url.rsplit("/", 1)[0] + "/" + href
+                url = urljoin(self.page.url, href)
 
                 products_data.append({
                     "title": title,
