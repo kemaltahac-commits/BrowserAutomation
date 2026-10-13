@@ -160,3 +160,32 @@ Author
 Kemal
 Management Information Systems Student
 Python Automation & Business Data Tools
+
+## Competitor Price Report — Use Case
+
+This project can be used to create structured competitor price comparison reports from publicly accessible product pages.
+
+Using CSS selectors, the tool extracts product information such as product name, category, current price, and product URL. It normalizes price and relative URL values, handles pagination, and exports the final dataset as Excel, CSV, or JSON.
+
+### Demo Output
+
+A sample Excel and PDF report were created using public data from the **Books to Scrape** demo website.
+
+- **1,000 public product records**
+- Fields included: `Source`, `Product Name`, `Category`, `Current Price`, `Product URL`, and `Checked Date`
+- Summary metrics: lowest price, highest price, average price, source count, and product count
+- Clean, sortable Excel format designed for quick review and comparison
+
+> Note: This is a delivery-format demonstration built with public demo data. It is not presented as a real competitor analysis.
+
+- [View the demo Excel report](./competitor_price_report_demo.xlsx)
+- [View the demo PDF report](./competitor_price_report_demo.pdf)
+
+### Suitable Use Cases
+
+- Public competitor product-price snapshots
+- Multi-source price comparison spreadsheets
+- E-commerce catalog extraction for internal research
+- Structured Excel reports from publicly accessible websites
+
+This tool is intended only for publicly accessible websites. It does not target login-protected, private, restricted, or CAPTCHA-protected data.
