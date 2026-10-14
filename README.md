@@ -169,17 +169,26 @@ Using CSS selectors, the tool extracts product information such as product name,
 
 ### Demo Output
 
-A sample Excel and PDF report were created using public data from the **Books to Scrape** demo website.
+The scraper was tested on the public **Books to Scrape** practice website and exported **1,000 book records**.
 
-- **1,000 public product records**
-- Fields included: `Source`, `Product Name`, `Category`, `Current Price`, `Product URL`, and `Checked Date`
-- Summary metrics: lowest price, highest price, average price, source count, and product count
-- Clean, sortable Excel format designed for quick review and comparison
+The raw extraction output includes:
 
-> Note: This is a delivery-format demonstration built with public demo data. It is not presented as a real competitor analysis.
+- `title`
+- `price`
+- `url`
 
-- [View the demo Excel report](./competitor_price_report_demo.xlsx)
-- [View the demo PDF report](./competitor_price_report_demo.pdf)
+A portfolio-style Excel report was then created from that output to demonstrate a structured price-report delivery format.
+
+The report includes:
+
+- A `Summary` sheet with product count, lowest price, highest price, and average price
+- A `Price Report` sheet with `Source`, `Product Name`, `Current Price`, `Product URL`, and `Checked Date`
+- Clean, sortable data suitable for review and comparison
+
+> Note: This is a delivery-format demonstration created from public practice-site data. It is not a real competitor analysis, and the original dataset did not include a scrape date.
+
+- [View the raw extraction output](./output/all_books.xlsx)
+- [View the competitor price report demo](./competitor_price_report_demo.xlsx)
 
 ### Suitable Use Cases
 
