@@ -171,24 +171,15 @@ Using CSS selectors, the tool extracts product information such as product name,
 
 The scraper was tested on the public **Books to Scrape** practice website and exported **1,000 book records**.
 
-The raw extraction output includes:
+The output includes:
 
 - `title`
 - `price`
 - `url`
 
-A portfolio-style Excel report was then created from that output to demonstrate a structured price-report delivery format.
+- [View the 1,000-record Excel output](./all_books.xlsx)
 
-The report includes:
-
-- A `Summary` sheet with product count, lowest price, highest price, and average price
-- A `Price Report` sheet with `Source`, `Product Name`, `Current Price`, `Product URL`, and `Checked Date`
-- Clean, sortable data suitable for review and comparison
-
-> Note: This is a delivery-format demonstration created from public practice-site data. It is not a real competitor analysis, and the original dataset did not include a scrape date.
-
-- [View the raw extraction output](./output/all_books.xlsx)
-- [View the competitor price report demo](./competitor_price_report_demo.xlsx)
+> Note: This output uses public practice-site data and is included as a technical demonstration.
 
 ### Suitable Use Cases
 
